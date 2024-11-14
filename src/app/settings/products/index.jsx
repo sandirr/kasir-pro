@@ -1,111 +1,52 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, Search2Icon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
   Flex,
   Heading,
+  IconButton,
   Input,
+  InputGroup,
+  InputRightAddon,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Select,
+  Stack,
   Table,
   TableContainer,
   Tbody,
   Td,
+  Text,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react";
-import { firestore } from "firebase";
-import {
-  query,
-  limit,
-  startAfter,
-  orderBy,
-  getDocs,
-  where,
-  collection,
-  getCountFromServer,
-} from "firebase/firestore";
-import { useEffect, useState } from "react";
+import useProducts from "./useProducts";
+import DnDImage from "elements/dnd-image";
 
 export default function ProductsMng() {
-  const [products, setProducts] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [totalPages, setTotalPages] = useState(0);
-  const [pageSnapshots, setPageSnapshots] = useState([]); // To store last document of each page
-  const perPage = 10;
+  const {
+    products,
+    currentPage,
+    isLoading,
+    totalPages,
+    searchTerm,
+    handleSearch,
+    goToPage,
+    perPage,
+    setPerpage,
+    setSearchTerm,
+  } = useProducts(10);
 
-  // Calculate total pages based on the total count of products matching the search
-  const calculateTotalPages = async (search) => {
-    const countQuery = search
-      ? query(
-          collection(
-            firestore,
-            "users/testing/workbench/iou0P0iz4roB7IkpYVgN/products",
-          ),
-          where("name", ">=", search),
-          where("name", "<=", search + "\uf8ff"),
-        )
-      : collection(
-          firestore,
-          "users/testing/workbench/iou0P0iz4roB7IkpYVgN/products",
-        );
-
-    const snapshot = await getCountFromServer(countQuery);
-    setTotalPages(Math.ceil(snapshot.data().count / perPage));
-  };
-
-  // Fetch products with pagination and optional search
-  const fetchProducts = async (page = 1, search = "") => {
-    setIsLoading(true);
-
-    let productQuery = query(
-      collection(
-        firestore,
-        "users/testing/workbench/iou0P0iz4roB7IkpYVgN/products",
-      ),
-      orderBy("name"),
-      where("name", ">=", search),
-      where("name", "<=", search + "\uf8ff"),
-      limit(perPage),
-    );
-
-    if (page > 1 && pageSnapshots[page - 2]) {
-      // Start after the last document of the previous page
-      productQuery = query(productQuery, startAfter(pageSnapshots[page - 2]));
-    }
-
-    const snap = await getDocs(productQuery);
-    const docs = snap.docs.map((doc) => doc.data());
-    setProducts(docs);
-    setIsLoading(false);
-
-    // Store the last document snapshot for future pages
-    if (snap.docs.length > 0) {
-      const newPageSnapshots = [...pageSnapshots];
-      newPageSnapshots[page - 1] = snap.docs[snap.docs.length - 1];
-      setPageSnapshots(newPageSnapshots);
-    }
-  };
-
-  useEffect(() => {
-    calculateTotalPages(searchTerm); // Calculate pages based on current search term
-    fetchProducts(currentPage, searchTerm); // Fetch data when page or search changes
-  }, [currentPage, searchTerm]);
-
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to page 1 on new search
-    setPageSnapshots([]); // Clear snapshots for a fresh search
-    fetchProducts(1, e.target.value);
-  };
-
-  const goToPage = (page) => {
-    setCurrentPage(page);
-  };
+  const { isOpen: addNew, onToggle: toggleAddNew } = useDisclosure();
 
   return (
-    <Box>
+    <>
       <Flex
         justifyContent="space-between"
         alignItems="center"
@@ -116,19 +57,40 @@ export default function ProductsMng() {
         <Heading as="h2" fontSize="xl">
           Manajemen Produk
         </Heading>
-        <Button size="sm" colorScheme="blue" leftIcon={<AddIcon />}>
+        <Button
+          size="sm"
+          colorScheme="blue"
+          leftIcon={<AddIcon />}
+          onClick={toggleAddNew}
+        >
           Tambah Produk
         </Button>
       </Flex>
 
       {/* Search Input */}
-      <Flex my="4">
-        <Input
-          placeholder="Cari produk..."
-          value={searchTerm}
-          onChange={handleSearch}
-          size="sm"
-        />
+      <Flex my="4" justifyContent="space-between">
+        <Flex>
+          <Select
+            size="sm"
+            value={perPage}
+            onChange={({ target }) => setPerpage(target.value)}
+          >
+            <option>10</option>
+            <option>25</option>
+            <option>50</option>
+          </Select>
+        </Flex>
+        <Flex gap="2">
+          <Input
+            placeholder="Cari produk..."
+            value={searchTerm}
+            onChange={({ target }) => setSearchTerm(target.value)}
+            size="sm"
+          />
+          <IconButton size="sm" colorScheme="blue" onClick={handleSearch}>
+            <Search2Icon />
+          </IconButton>
+        </Flex>
       </Flex>
 
       <TableContainer mt="2">
@@ -184,6 +146,81 @@ export default function ProductsMng() {
           Next
         </Button>
       </Flex>
-    </Box>
+
+      <Modal isOpen={addNew} onClose={toggleAddNew}>
+        <ModalOverlay />
+        <ModalContent maxW="5xl">
+          <ModalHeader fontSize="md">Tambah Produk</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Stack spacing={3}>
+              <Flex flexWrap="wrap" gap="4">
+                <Box flex={1}>
+                  <Text as="label" fontSize="sm">
+                    Nama
+                  </Text>
+                  <Input size="sm" />
+                </Box>
+                <Box flex={1}>
+                  <Text as="label" fontSize="sm">
+                    Kategori
+                  </Text>
+                  <Select size="sm" placeholder="Pilih Kategori">
+                    <option>A</option>
+                    <option>B</option>
+                  </Select>
+                </Box>
+              </Flex>
+              <Flex flexWrap="wrap" gap="4">
+                <Box flex={1}>
+                  <Text as="label" fontSize="sm">
+                    Harga
+                  </Text>
+                  <Input size="sm" type="number" />
+                </Box>
+                <Box flex={1}>
+                  <Text as="label" fontSize="sm">
+                    Diskon
+                  </Text>
+                  <InputGroup size="sm">
+                    <Input type="number" />
+                    <InputRightAddon fontSize="sm">0%</InputRightAddon>
+                  </InputGroup>
+                </Box>
+              </Flex>
+              <Flex flexWrap="wrap" gap="4">
+                <Box flex={1}>
+                  <Text as="label" fontSize="sm">
+                    Stok
+                  </Text>
+                  <Input size="sm" type="number" />
+                </Box>
+                <Box flex={1}>
+                  <Text as="label" fontSize="sm">
+                    Unit
+                  </Text>
+                  <Select size="sm" placeholder="Pilih Unit">
+                    <option>Porsi</option>
+                    <option>Kotak</option>
+                    <option>Bungkus</option>
+                    <option>Roll</option>
+                    <option>Pcs</option>
+                    <option>Kg</option>
+                    <option>Liter</option>
+                  </Select>
+                </Box>
+              </Flex>
+              <DnDImage />
+            </Stack>
+          </ModalBody>
+          <ModalFooter gap="4">
+            <Button colorScheme="gray" onClick={toggleAddNew}>
+              Batal
+            </Button>
+            <Button colorScheme="blue">Simpan</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }

@@ -21,6 +21,7 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  SlideFade,
 } from "@chakra-ui/react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { HamburgerIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
@@ -72,7 +73,7 @@ export default function AppLayout() {
             ) : (
               <>
                 <Flex gap={["8", "12", "16"]}>
-                  <NavLink>Transaksi</NavLink>
+                  <NavLink to="">Transaksi</NavLink>
                   <NavLink>Riwayat</NavLink>
                   <NavLink>Laporan</NavLink>
                   <NavLink to="settings">Pengaturan</NavLink>
@@ -147,11 +148,11 @@ export default function AppLayout() {
         </Drawer>
       </Box>
 
-      <Box as="main" py="2">
+      <SlideFade in as="main" py="2">
         <Container maxW="9xl">
           <Outlet />
         </Container>
-      </Box>
+      </SlideFade>
     </>
   );
 }
