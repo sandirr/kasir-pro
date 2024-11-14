@@ -7,6 +7,8 @@ import { extendTheme } from "@chakra-ui/react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import AppLayout from "elements/app-layout";
 import Transaction from "app/transaksi";
+import ProductsMng from "app/settings/products";
+import Settings from "app/settings";
 
 const theme = extendTheme({
   colors: {
@@ -37,6 +39,16 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Transaction />,
+      },
+      {
+        path: "settings",
+        element: <Settings />,
+        children: [
+          {
+            path: "products",
+            element: <ProductsMng />,
+          },
+        ],
       },
     ],
   },

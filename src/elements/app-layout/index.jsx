@@ -75,7 +75,7 @@ export default function AppLayout() {
                   <NavLink>Transaksi</NavLink>
                   <NavLink>Riwayat</NavLink>
                   <NavLink>Laporan</NavLink>
-                  <NavLink>Pengaturan</NavLink>
+                  <NavLink to="settings">Pengaturan</NavLink>
                 </Flex>
                 <Flex alignItems={"center"} gap="4">
                   <IconButton onClick={toggleColorMode} variant="ghost">
