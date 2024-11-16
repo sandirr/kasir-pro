@@ -148,8 +148,8 @@ export default function AppLayout() {
         </Drawer>
       </Box>
 
-      <SlideFade in as="main" py="2">
-        <Container maxW="9xl">
+      <SlideFade in as="main">
+        <Container maxW="9xl" py="2">
           <Outlet />
         </Container>
       </SlideFade>

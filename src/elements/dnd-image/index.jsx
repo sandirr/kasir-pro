@@ -14,23 +14,22 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { IoCamera, IoCameraReverse } from "react-icons/io5";
+import { IoCamera, IoCameraReverse, IoImage } from "react-icons/io5";
 import { CloseIcon } from "@chakra-ui/icons";
 import { Camera } from "react-camera-pro";
+import { dataURLToBlob } from "helpers";
 
-export default function DnDImage() {
-  const [preview, setPreview] = useState(null);
+export default function DnDImage({ onChange, image = null }) {
+  const [preview, setPreview] = useState(() => image);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const camera = useRef(null);
 
   const onDrop = useCallback((acceptedFiles) => {
     const file = acceptedFiles[0];
     if (file) {
-      console.log("File uploaded:", file);
-      if (file) {
-        const previewUrl = URL.createObjectURL(file);
-        setPreview(previewUrl);
-      }
+      const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);
+      onChange(file);
     }
   }, []);
 
@@ -42,6 +41,7 @@ export default function DnDImage() {
 
   const removePreview = () => {
     setPreview(null);
+    onChange(null);
   };
 
   const handleOpenCamera = () => {
@@ -51,15 +51,21 @@ export default function DnDImage() {
   const handleTakePhoto = () => {
     if (camera.current) {
       const photo = camera.current.takePhoto();
-      console.log(photo);
       setPreview(photo);
+      onChange(dataURLToBlob(photo));
       setIsCameraOpen(false);
     }
   };
 
   return (
     <Box>
-      <Button onClick={handleOpenCamera} colorScheme="orange" size="sm" mb="2">
+      <Button
+        onClick={handleOpenCamera}
+        colorScheme="orange"
+        size="sm"
+        mb="2"
+        leftIcon={<Icon as={IoCamera} />}
+      >
         Buka Kamera
       </Button>
 
@@ -114,14 +120,14 @@ export default function DnDImage() {
         cursor="pointer"
         _hover={{ borderColor: "blue.500" }}
       >
-        <input {...getInputProps()} />
+        <input {...getInputProps()} disabled={!!preview} />
 
         {preview ? (
           <Box position="relative" display="inline-block">
             <Image
               src={preview}
               alt="Preview"
-              boxSize="200px"
+              boxSize="320px"
               objectFit="cover"
             />
             <IconButton
@@ -138,7 +144,7 @@ export default function DnDImage() {
           </Box>
         ) : (
           <VStack spacing={4}>
-            <Icon as={IoCamera} boxSize={12} color="gray.400" />
+            <Icon as={IoImage} boxSize={12} color="gray.400" />
             {isDragActive ? (
               <Text>Letakkan gambar di sini!</Text>
             ) : (

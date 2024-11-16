@@ -1,35 +1,28 @@
-import { AddIcon, Search2Icon } from "@chakra-ui/icons";
+import { AddIcon, DeleteIcon, EditIcon, Search2Icon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
+  ButtonGroup,
   Flex,
   Heading,
+  Icon,
   IconButton,
+  Image,
   Input,
-  InputGroup,
-  InputRightAddon,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   Select,
-  Stack,
   Table,
   TableContainer,
   Tbody,
   Td,
-  Text,
   Thead,
+  Tooltip,
   Tr,
-  useDisclosure,
 } from "@chakra-ui/react";
-import useProducts from "./useProducts";
-import DnDImage from "elements/dnd-image";
+import useProducts from "./use-products";
+import AddProduct from "./add-product";
 
 export default function ProductsMng() {
+  const productUtils = useProducts(10);
   const {
     products,
     currentPage,
@@ -41,12 +34,15 @@ export default function ProductsMng() {
     perPage,
     setPerpage,
     setSearchTerm,
-  } = useProducts(10);
-
-  const { isOpen: addNew, onToggle: toggleAddNew } = useDisclosure();
+    toggleForm,
+    selectToUpdate,
+    Confirmation,
+    handleDeleteProduct,
+  } = productUtils;
 
   return (
     <>
+      {Confirmation}
       <Flex
         justifyContent="space-between"
         alignItems="center"
@@ -61,7 +57,7 @@ export default function ProductsMng() {
           size="sm"
           colorScheme="blue"
           leftIcon={<AddIcon />}
-          onClick={toggleAddNew}
+          onClick={toggleForm}
         >
           Tambah Produk
         </Button>
@@ -73,19 +69,20 @@ export default function ProductsMng() {
           <Select
             size="sm"
             value={perPage}
-            onChange={({ target }) => setPerpage(target.value)}
+            onChange={({ target }) => setPerpage(Number(target.value))}
           >
-            <option>10</option>
-            <option>25</option>
-            <option>50</option>
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
           </Select>
         </Flex>
         <Flex gap="2">
           <Input
-            placeholder="Cari produk..."
+            placeholder="Cari nama produk..."
             value={searchTerm}
             onChange={({ target }) => setSearchTerm(target.value)}
             size="sm"
+            type="search"
           />
           <IconButton size="sm" colorScheme="blue" onClick={handleSearch}>
             <Search2Icon />
@@ -105,6 +102,7 @@ export default function ProductsMng() {
               <Td>Harga Setelah Diskon</Td>
               <Td>Stok (unit)</Td>
               <Td>Kategori</Td>
+              <Td isNumeric>Aksi</Td>
             </Tr>
           </Thead>
           <Tbody>
@@ -112,21 +110,48 @@ export default function ProductsMng() {
               <Tr key={index}>
                 <Td>{index + 1 + (currentPage - 1) * perPage}</Td>
                 <Td>{product.name}</Td>
-                <Td>{product.image}</Td>
+                <Td>
+                  <Image
+                    src={product.image || "https://placehold.co/40x40"}
+                    width={10}
+                  />
+                </Td>
                 <Td>{product.price}</Td>
-                <Td>{product.discount}</Td>
+                <Td>
+                  {product.discount} (
+                  {Math.round((product.discount / product.price) * 100)}%)
+                </Td>
                 <Td>{product.price_after_discount}</Td>
                 <Td>
                   {product.stock} ({product.unit})
                 </Td>
                 <Td>{product.category}</Td>
+                <Td isNumeric>
+                  <ButtonGroup size="sm">
+                    <Tooltip label="Edit">
+                      <IconButton
+                        colorScheme="teal"
+                        onClick={() => selectToUpdate(product)}
+                      >
+                        <Icon as={EditIcon} />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip label="Hapus">
+                      <IconButton
+                        colorScheme="red"
+                        onClick={() => handleDeleteProduct(product)}
+                      >
+                        <Icon as={DeleteIcon} />
+                      </IconButton>
+                    </Tooltip>
+                  </ButtonGroup>
+                </Td>
               </Tr>
             ))}
           </Tbody>
         </Table>
       </TableContainer>
 
-      {/* Pagination Controls */}
       <Flex justifyContent="center" mt="4">
         <Button
           onClick={() => goToPage(currentPage - 1)}
@@ -147,80 +172,7 @@ export default function ProductsMng() {
         </Button>
       </Flex>
 
-      <Modal isOpen={addNew} onClose={toggleAddNew}>
-        <ModalOverlay />
-        <ModalContent maxW="5xl">
-          <ModalHeader fontSize="md">Tambah Produk</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Stack spacing={3}>
-              <Flex flexWrap="wrap" gap="4">
-                <Box flex={1}>
-                  <Text as="label" fontSize="sm">
-                    Nama
-                  </Text>
-                  <Input size="sm" />
-                </Box>
-                <Box flex={1}>
-                  <Text as="label" fontSize="sm">
-                    Kategori
-                  </Text>
-                  <Select size="sm" placeholder="Pilih Kategori">
-                    <option>A</option>
-                    <option>B</option>
-                  </Select>
-                </Box>
-              </Flex>
-              <Flex flexWrap="wrap" gap="4">
-                <Box flex={1}>
-                  <Text as="label" fontSize="sm">
-                    Harga
-                  </Text>
-                  <Input size="sm" type="number" />
-                </Box>
-                <Box flex={1}>
-                  <Text as="label" fontSize="sm">
-                    Diskon
-                  </Text>
-                  <InputGroup size="sm">
-                    <Input type="number" />
-                    <InputRightAddon fontSize="sm">0%</InputRightAddon>
-                  </InputGroup>
-                </Box>
-              </Flex>
-              <Flex flexWrap="wrap" gap="4">
-                <Box flex={1}>
-                  <Text as="label" fontSize="sm">
-                    Stok
-                  </Text>
-                  <Input size="sm" type="number" />
-                </Box>
-                <Box flex={1}>
-                  <Text as="label" fontSize="sm">
-                    Unit
-                  </Text>
-                  <Select size="sm" placeholder="Pilih Unit">
-                    <option>Porsi</option>
-                    <option>Kotak</option>
-                    <option>Bungkus</option>
-                    <option>Roll</option>
-                    <option>Pcs</option>
-                    <option>Kg</option>
-                    <option>Liter</option>
-                  </Select>
-                </Box>
-              </Flex>
-              <DnDImage />
-            </Stack>
-          </ModalBody>
-          <ModalFooter gap="4">
-            <Button colorScheme="gray" onClick={toggleAddNew}>
-              Batal
-            </Button>
-            <Button colorScheme="blue">Simpan</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <AddProduct {...productUtils} />
     </>
   );
 }
