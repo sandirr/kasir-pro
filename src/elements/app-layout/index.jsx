@@ -22,37 +22,89 @@ import {
   PopoverTrigger,
   PopoverContent,
   SlideFade,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { HamburgerIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import reactLogo from "assets/react.svg";
 import { IoLogOut } from "react-icons/io5";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { auth, firestore } from "utils/firebase";
+import { doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
 
 export default function AppLayout() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const [user, setUser] = useState({});
+
+  const getUser = () => {
+    try {
+      onAuthStateChanged(auth, async (currentUser) => {
+        if (currentUser) {
+          const userRef = doc(firestore, "users", currentUser?.uid);
+          const res = await getDoc(userRef);
+          if (res.exists()) setUser(res.data());
+        }
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   const profile = useMemo(
     () => (
       <Flex alignItems={"center"} direction={"column"} gap="2" mb="4">
         <Avatar
           name="Dan Abrahmov"
-          src="https://bit.ly/dan-abramov"
+          src={user?.photoURL}
           size="xl"
+          border="1px solid"
         />
+        <Text fontWeight="bold" fontSize="sm">
+          {user.name}
+        </Text>
         <Link>
           <Text fontSize="sm">Edit Profil</Text>
         </Link>
       </Flex>
     ),
-    [],
+    [user],
   );
+
+  const menus = [
+    {
+      name: "Transaksi",
+      path: "",
+    },
+    {
+      name: "Riwayat",
+      path: "history",
+    },
+    {
+      name: "Laporan",
+      path: "report",
+    },
+    {
+      name: "Pengaturan",
+      path: "settings",
+    },
+  ];
 
   return (
     <>
-      <Box as="nav" boxShadow={"md"}>
+      <Box
+        as="nav"
+        boxShadow={"md"}
+        className="sticky"
+        top="1"
+        bg={useColorModeValue("white", "gray.900")}
+      >
         <Container maxW={"9xl"}>
           <Flex justifyContent={"space-between"} alignItems={"center"} py="2">
             <Image
@@ -73,10 +125,11 @@ export default function AppLayout() {
             ) : (
               <>
                 <Flex gap={["8", "12", "16"]}>
-                  <NavLink to="">Transaksi</NavLink>
-                  <NavLink>Riwayat</NavLink>
-                  <NavLink>Laporan</NavLink>
-                  <NavLink to="settings">Pengaturan</NavLink>
+                  {menus.map((menu) => (
+                    <NavLink to={menu.path} key={menu.path}>
+                      {menu.name}
+                    </NavLink>
+                  ))}
                 </Flex>
                 <Flex alignItems={"center"} gap="4">
                   <IconButton onClick={toggleColorMode} variant="ghost">
@@ -86,8 +139,9 @@ export default function AppLayout() {
                     <PopoverTrigger>
                       <Avatar
                         name="Dan Abrahmov"
-                        src="https://bit.ly/dan-abramov"
+                        src={user?.photoURL}
                         size="md"
+                        border="1px solid"
                       />
                     </PopoverTrigger>
                     <PopoverContent p="4">
@@ -116,10 +170,11 @@ export default function AppLayout() {
             <DrawerBody>
               <Flex direction="column" gap="4" mt="4">
                 {profile}
-                <NavLink onClick={onClose}>Transaksi</NavLink>
-                <NavLink onClick={onClose}>Riwayat</NavLink>
-                <NavLink onClick={onClose}>Laporan</NavLink>
-                <NavLink onClick={onClose}>Pengaturan</NavLink>
+                {menus.map((menu) => (
+                  <NavLink to={menu.path} onClick={onClose} key={menu.path}>
+                    {menu.name}
+                  </NavLink>
+                ))}
 
                 <FormControl display="flex" alignItems="center" gap="2">
                   <Switch
@@ -150,7 +205,7 @@ export default function AppLayout() {
 
       <SlideFade in as="main">
         <Container maxW="9xl" py="2">
-          <Outlet />
+          <Outlet context={user} />
         </Container>
       </SlideFade>
     </>

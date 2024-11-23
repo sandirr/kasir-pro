@@ -18,7 +18,7 @@ import {
   // setDoc,
   // collectionGroup,
 } from "firebase/firestore";
-import { firestore } from "firebase";
+import { firestore } from "utils/firebase";
 import { useDisclosure } from "@chakra-ui/react";
 import useCloudinaryUpload from "custom-hooks/upload-file";
 import useCustomToast from "custom-hooks/toast";

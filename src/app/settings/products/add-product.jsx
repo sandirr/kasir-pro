@@ -187,13 +187,15 @@ export default function AddProduct(props) {
                         value={values.unit}
                         onChange={handleChange}
                       >
+                        <option value="pcs">Pcs</option>
                         <option value="porsi">Porsi</option>
                         <option value="kotak">Kotak</option>
                         <option value="bungkus">Bungkus</option>
                         <option value="roll">Roll</option>
-                        <option value="pcs">Pcs</option>
                         <option value="kg">Kg</option>
                         <option value="liter">Liter</option>
+                        <option value="piring">Piring</option>
+                        <option value="gelas">Gelas</option>
                       </Select>
                       {errors.unit && touched.unit && (
                         <Text fontSize="xs" color="red.500">
