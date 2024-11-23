@@ -2,6 +2,7 @@ import App from "App";
 import Settings from "app/settings";
 import ProductsMng from "app/settings/products";
 import Starter from "app/starter";
+import CashierSystem from "app/starter/cashier-system";
 import Pricing from "app/starter/pricing";
 import Transaction from "app/transaksi";
 import AppLayout from "elements/app-layout";
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     path: "starter",
     element: <Starter />,
     children: [
+      {
+        index: true,
+        element: <CashierSystem />,
+      },
       {
         path: "pricing",
         element: <Pricing />,

@@ -14,11 +14,17 @@ import {
   Divider,
   Badge,
 } from "@chakra-ui/react";
+import { serverTimestamp } from "firebase/firestore";
 import { useRef } from "react";
 import { FaCheckCircle, FaRegTimesCircle } from "react-icons/fa";
 
 const options = [
-  { id: 1, desc: "1 sistem kasir", icon: FaCheckCircle, color: "green.500" },
+  {
+    id: 1,
+    desc: "1 sistem kasir/toko",
+    icon: FaCheckCircle,
+    color: "green.500",
+  },
   { id: 2, desc: "1 pegawai kasir", icon: FaCheckCircle, color: "green.500" },
   { id: 3, desc: "2 kategori produk", icon: FaCheckCircle, color: "green.500" },
   {
@@ -33,7 +39,12 @@ const options = [
     icon: FaCheckCircle,
     color: "green.500",
   },
-  { id: 6, desc: "laporan penjualan", icon: FaRegTimesCircle, color: "red" },
+  {
+    id: 6,
+    desc: "laporan penjualan, transaksi, dan shift kasir",
+    icon: FaRegTimesCircle,
+    color: "red",
+  },
   { id: 7, desc: "share katalog produk", icon: FaRegTimesCircle, color: "red" },
   { id: 8, desc: "gunakan logo sendiri", icon: FaRegTimesCircle, color: "red" },
 ];
@@ -41,7 +52,7 @@ const options = [
 const options2 = [
   {
     id: 1,
-    desc: "unlimited sistem kasir",
+    desc: "50 sistem kasir/toko",
     icon: FaCheckCircle,
     color: "green.500",
   },
@@ -69,7 +80,12 @@ const options2 = [
     icon: FaCheckCircle,
     color: "green.500",
   },
-  { id: 6, desc: "laporan penjualan", icon: FaCheckCircle, color: "green.500" },
+  {
+    id: 6,
+    desc: "laporan penjualan, transaksi, dan shift kasir",
+    icon: FaCheckCircle,
+    color: "green.500",
+  },
   {
     id: 7,
     desc: "share katalog produk",
@@ -107,6 +123,8 @@ export default function Pricing() {
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  console.log(serverTimestamp.toString());
   return (
     <Box py={8}>
       <Container maxW="2xl">
@@ -142,7 +160,7 @@ export default function Pricing() {
       </Stack>
 
       <Stack
-        direction={{ base: "column", md: "row" }}
+        direction={{ base: "column", lg: "row" }}
         textAlign="center"
         justify="center"
         spacing={{ base: 4, lg: 10 }}
@@ -153,17 +171,17 @@ export default function Pricing() {
         <PriceWrapper>
           <Box py={4} px={12}>
             <Text fontWeight="500" fontSize="2xl">
-              Tunas
+              Tunas <Badge colorScheme="red">3 Bulan</Badge>
             </Text>
             <HStack justifyContent="center">
               <Text fontSize="3xl" fontWeight="600">
                 Rp
               </Text>
               <Text fontSize="4xl" fontWeight="900">
-                199K
+                33.000
               </Text>
               <Text fontSize="2xl" color="gray.500">
-                /3 bulan
+                /bulan
               </Text>
             </HStack>
           </Box>
@@ -188,8 +206,7 @@ export default function Pricing() {
               style={{ transform: "translate(-50%)" }}
             >
               <Text
-                textTransform="uppercase"
-                bg={useColorModeValue("blue.300", "blue.700")}
+                bg={useColorModeValue("green.300", "green.700")}
                 px={3}
                 py={1}
                 color={useColorModeValue("gray.900", "gray.300")}
@@ -202,17 +219,17 @@ export default function Pricing() {
             </Box>
             <Box py={4} px={12}>
               <Text fontWeight="500" fontSize="2xl">
-                Tumbuh
+                Tumbuh <Badge colorScheme="red">6 Bulan</Badge>
               </Text>
               <HStack justifyContent="center">
                 <Text fontSize="3xl" fontWeight="600">
                   Rp
                 </Text>
                 <Text fontSize="4xl" fontWeight="900">
-                  299K
+                  30.000
                 </Text>
                 <Text fontSize="2xl" color="gray.500">
-                  /6 bulan
+                  /bulan
                 </Text>
               </HStack>
             </Box>
@@ -232,17 +249,17 @@ export default function Pricing() {
         <PriceWrapper>
           <Box py={4} px={12}>
             <Text fontWeight="500" fontSize="2xl">
-              Pro
+              Pro <Badge colorScheme="red">12 Bulan</Badge>
             </Text>
             <HStack justifyContent="center">
               <Text fontSize="3xl" fontWeight="600">
                 Rp
               </Text>
               <Text fontSize="4xl" fontWeight="900">
-                499
+                25.000
               </Text>
               <Text fontSize="2xl" color="gray.500">
-                /12 bulan
+                /bulan
               </Text>
             </HStack>
           </Box>
@@ -276,15 +293,18 @@ const PackageTier = ({
       py={3}
       justifyContent={{
         base: "flex-start",
-        md: "space-around",
+        lg: "space-around",
       }}
       direction={{
         base: "column",
-        md: "row",
+        lg: "row",
       }}
       alignItems={{ md: "center" }}
     >
-      <Heading size={"md"}>{title}</Heading>
+      <Box>
+        <Heading size={"md"}>{title}</Heading>
+        {active && <Badge colorScheme="blue">Aktif</Badge>}
+      </Box>
       <List spacing={3} textAlign="start">
         {options.map((desc) => (
           <ListItem key={desc.id}>
@@ -293,10 +313,7 @@ const PackageTier = ({
           </ListItem>
         ))}
       </List>
-      <Box>
-        <Heading>{typePlan}</Heading>
-        {active && <Badge colorScheme="blue">Aktif</Badge>}
-      </Box>
+      <Heading fontSize="lg">{typePlan}</Heading>
       <Stack>
         <Button size="md" colorScheme="green" onClick={scrollToBottom}>
           Pilih Paket

@@ -12,17 +12,22 @@ import {
   Badge,
   Button,
   Avatar,
+  FormControl,
+  Switch,
+  FormLabel,
+  useColorMode,
+  Stack,
 } from "@chakra-ui/react";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 import { FiHome, FiMenu, FiMessageCircle, FiTag } from "react-icons/fi";
 import { IoLogOut } from "react-icons/io5";
-import { Link, Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { auth, firestore } from "utils/firebase";
 
 const LinkItems = [
-  { name: "Sistem Kasir", icon: FiHome, path: "" },
+  { name: "Sistem Kasir/Toko", icon: FiHome, path: "" },
   { name: "Berlangganan", icon: FiTag, path: "pricing" },
   {
     name: (
@@ -89,6 +94,7 @@ export default function Starter() {
 }
 
 const SidebarContent = ({ onClose, user, ...rest }) => {
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
     <Box
       bg={useColorModeValue("white", "gray.800")}
@@ -121,7 +127,18 @@ const SidebarContent = ({ onClose, user, ...rest }) => {
       </Box>
 
       {/* Bagian Footer */}
-      <Box m="4">
+      <Stack m="4">
+        <FormControl display="flex" alignItems="center" gap="2" mb="4">
+          <Switch
+            id="email-alerts"
+            colorScheme="orange"
+            checked={colorMode === "light"}
+            onChange={() => toggleColorMode()}
+          />
+          <FormLabel htmlFor="email-alerts" mb="0" fontSize={"sm"}>
+            {colorMode === "dark" ? "Mode Gelap" : "Mode Terang"}
+          </FormLabel>
+        </FormControl>
         <Flex mb="4">
           <Avatar src={user?.photoURL} />
           <Box ml="3">
@@ -137,20 +154,17 @@ const SidebarContent = ({ onClose, user, ...rest }) => {
         >
           Keluar
         </Button>
-      </Box>
+      </Stack>
     </Box>
   );
 };
 
 const NavItem = ({ icon, children, to, ...rest }) => {
   return (
-    <Box
-      as={Link}
-      to={to}
-      style={{ textDecoration: "none" }}
-      _focus={{ boxShadow: "none" }}
-    >
+    <Box style={{ textDecoration: "none" }} _focus={{ boxShadow: "none" }}>
       <Flex
+        as={NavLink}
+        to={to}
         align="center"
         p="4"
         mx="4"
