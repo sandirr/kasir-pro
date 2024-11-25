@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useMemo } from "react";
 import {
   query,
@@ -214,13 +213,12 @@ const useProducts = (initialPerPage = 10) => {
           updated_at: serverTimestamp(),
         },
         { merge: true },
-      ).then(() => {
-        closeForm();
-        resetForm();
-        showToast({
-          title: "Sukses",
-          description: "Produk berhasil diedit",
-        });
+      );
+      closeForm();
+      resetForm();
+      showToast({
+        title: "Sukses",
+        description: "Produk berhasil diedit",
       });
     } catch (error) {
       console.error("Gagal mengedit produk:", error);

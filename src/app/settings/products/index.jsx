@@ -19,7 +19,7 @@ import {
   Tr,
 } from "@chakra-ui/react";
 import useProducts from "./use-products";
-import AddProduct from "./add-product";
+import ProductForm from "./form";
 
 export default function ProductsMng() {
   const productUtils = useProducts(10);
@@ -172,7 +172,7 @@ export default function ProductsMng() {
         </Button>
       </Flex>
 
-      <AddProduct {...productUtils} />
+      <ProductForm {...productUtils} />
     </>
   );
 }

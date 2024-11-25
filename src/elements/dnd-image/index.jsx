@@ -41,7 +41,7 @@ export default function DnDImage({ onChange, image = null }) {
 
   const removePreview = () => {
     setPreview(null);
-    onChange(null);
+    onChange("");
   };
 
   const handleOpenCamera = () => {

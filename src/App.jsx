@@ -42,7 +42,7 @@ function App() {
               name: user.displayName || "",
               email: user.email || "",
               photoURL: user.photoURL || "",
-              createdAt: serverTimestamp(),
+              created_at: serverTimestamp(),
             });
             navigate("/app");
           } catch (error) {

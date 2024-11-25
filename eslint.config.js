@@ -37,6 +37,7 @@ export default [
       ],
       "react/prop-types": "off",
       "prettier/prettier": "warn", // Tambahkan rule Prettier
+      "react-hooks/exhaustive-deps": "off",
     },
   },
 ];

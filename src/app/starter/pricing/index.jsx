@@ -13,8 +13,8 @@ import {
   Container,
   Divider,
   Badge,
+  SimpleGrid,
 } from "@chakra-ui/react";
-import { serverTimestamp } from "firebase/firestore";
 import { useRef } from "react";
 import { FaCheckCircle, FaRegTimesCircle } from "react-icons/fa";
 
@@ -108,7 +108,6 @@ function PriceWrapper(props) {
       mb={4}
       shadow="base"
       borderWidth="1px"
-      alignSelf={{ base: "center", lg: "flex-start" }}
       borderColor={useColorModeValue("gray.200", "gray.500")}
       borderRadius={"xl"}
     >
@@ -123,8 +122,6 @@ export default function Pricing() {
   const scrollToBottom = () => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-
-  console.log(serverTimestamp.toString());
   return (
     <Box py={8}>
       <Container maxW="2xl">
@@ -159,18 +156,16 @@ export default function Pricing() {
         />
       </Stack>
 
-      <Stack
-        direction={{ base: "column", lg: "row" }}
-        textAlign="center"
-        justify="center"
-        spacing={{ base: 4, lg: 10 }}
+      <SimpleGrid
+        columns={[1, 1, 2, 3]}
+        spacing={4}
         py={10}
         mt="12"
         ref={bottomRef}
       >
         <PriceWrapper>
           <Box py={4} px={12}>
-            <Text fontWeight="500" fontSize="2xl">
+            <Text fontWeight="500" fontSize="2xl" textAlign="center">
               Tunas <Badge colorScheme="red">3 Bulan</Badge>
             </Text>
             <HStack justifyContent="center">
@@ -218,7 +213,7 @@ export default function Pricing() {
               </Text>
             </Box>
             <Box py={4} px={12}>
-              <Text fontWeight="500" fontSize="2xl">
+              <Text fontWeight="500" fontSize="2xl" textAlign="center">
                 Tumbuh <Badge colorScheme="red">6 Bulan</Badge>
               </Text>
               <HStack justifyContent="center">
@@ -248,7 +243,7 @@ export default function Pricing() {
         </PriceWrapper>
         <PriceWrapper>
           <Box py={4} px={12}>
-            <Text fontWeight="500" fontSize="2xl">
+            <Text fontWeight="500" fontSize="2xl" textAlign="center">
               Pro <Badge colorScheme="red">12 Bulan</Badge>
             </Text>
             <HStack justifyContent="center">
@@ -275,7 +270,7 @@ export default function Pricing() {
             </Box>
           </VStack>
         </PriceWrapper>
-      </Stack>
+      </SimpleGrid>
     </Box>
   );
 }

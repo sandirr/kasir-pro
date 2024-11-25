@@ -22,14 +22,12 @@ import * as Yup from "yup";
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Nama harus diisi"),
-  category: Yup.string().required("Kategori harus diisi"),
   price: Yup.number()
     .required("Harga harus diisi")
     .min(0, "Harga tidak boleh kurang dari 0"),
   stock: Yup.number()
     .required("Stok harus diisi")
     .min(0, "Stok tidak boleh kurang dari 0"),
-  unit: Yup.string().required("Satuan harus diisi"),
   discount: Yup.mixed().test(
     "validate-discount",
     "Diskon tidak valid: tidak boleh kurang dari 0 dan tidak boleh lebih dari harga",
@@ -43,7 +41,7 @@ const validationSchema = Yup.object({
   ),
 });
 
-export default function AddProduct(props) {
+export default function ProductForm(props) {
   const {
     addNew,
     toggleForm,
@@ -58,7 +56,7 @@ export default function AddProduct(props) {
     stock: "",
     unit: "",
     discount: 0,
-    image: null,
+    image: "",
   };
 
   return (
@@ -69,7 +67,14 @@ export default function AddProduct(props) {
         validationSchema={validationSchema}
         onSubmit={product ? handleUpdateProduct : handleAddNewProduct}
       >
-        {({ errors, touched, values, handleChange, setFieldValue }) => (
+        {({
+          errors,
+          touched,
+          values,
+          handleChange,
+          setFieldValue,
+          isSubmitting,
+        }) => (
           <Form>
             <ModalContent maxW="5xl">
               <ModalHeader fontSize="md">
@@ -214,7 +219,11 @@ export default function AddProduct(props) {
                 <Button colorScheme="gray" onClick={toggleForm}>
                   Batal
                 </Button>
-                <Button colorScheme="blue" type="submit">
+                <Button
+                  colorScheme="blue"
+                  type="submit"
+                  isLoading={isSubmitting}
+                >
                   Simpan
                 </Button>
               </ModalFooter>

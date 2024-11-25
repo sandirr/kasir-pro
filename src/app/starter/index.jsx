@@ -140,7 +140,7 @@ const SidebarContent = ({ onClose, user, ...rest }) => {
           </FormLabel>
         </FormControl>
         <Flex mb="4">
-          <Avatar src={user?.photoURL} />
+          <Avatar src={user.photoURL} />
           <Box ml="3">
             <Text fontWeight="bold">{user?.name}</Text>
           </Box>
