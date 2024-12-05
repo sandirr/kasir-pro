@@ -10,11 +10,11 @@ export const getToken = () => {
   return val || "";
 };
 
-export const setWorkbench = (val) => {
+export const setLocalWorkbench = (val) => {
   localStorage.setItem(workbench, JSON.stringify(val));
 };
 
-export const getWorkbench = () => {
+export const getLocalWorkbench = () => {
   const val = localStorage.getItem(workbench);
   return val ? JSON.parse(val) : null;
 };

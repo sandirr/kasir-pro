@@ -52,7 +52,11 @@ export default function CashierSystemForm(props) {
       "Logo harus berupa file gambar",
       (value) => {
         if (!value) return true;
-        return value instanceof File || value instanceof Blob;
+        return (
+          value instanceof File ||
+          value instanceof Blob ||
+          typeof value === "string"
+        );
       },
     ),
     employees: Yup.array().of(

@@ -32,12 +32,22 @@ import { useEffect, useMemo, useState } from "react";
 import { auth, firestore } from "utils/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import { getLocalWorkbench } from "utils/storage";
+
+const roles = {
+  1: "Super Admin",
+  2: "Admin",
+  3: "Kasir",
+};
 
 export default function AppLayout() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [user, setUser] = useState({});
+  const [role, setRole] = useState("");
+
+  const workbench = getLocalWorkbench();
 
   const getUser = () => {
     try {
@@ -46,6 +56,17 @@ export default function AppLayout() {
           const userRef = doc(firestore, "users", currentUser?.uid);
           const res = await getDoc(userRef);
           if (res.exists()) setUser(res.data());
+        }
+        if (currentUser.uid && workbench) {
+          if (currentUser.uid === workbench.owner) {
+            setRole(roles["1"]);
+          } else {
+            const me =
+              workbench.employees?.find(
+                (em) => em.email === currentUser.email,
+              ) || {};
+            setRole(roles[me.role || "3"]);
+          }
         }
       });
     } catch (err) {
@@ -56,6 +77,17 @@ export default function AppLayout() {
   useEffect(() => {
     getUser();
   }, []);
+
+  const appContext = useMemo(
+    () => ({
+      user,
+      workbench,
+      role,
+    }),
+    [user, workbench, role],
+  );
+
+  console.log(role);
 
   const profile = useMemo(
     () => (
@@ -69,12 +101,15 @@ export default function AppLayout() {
         <Text fontWeight="bold" fontSize="sm">
           {user.name}
         </Text>
+        <Text mt="-2" fontSize="sm">
+          {role}
+        </Text>
         <Link>
           <Text fontSize="sm">Edit Profil</Text>
         </Link>
       </Flex>
     ),
-    [user],
+    [user, role],
   );
 
   const menus = [
@@ -103,6 +138,7 @@ export default function AppLayout() {
         boxShadow={"md"}
         className="sticky"
         top="1"
+        zIndex={9999}
         bg={useColorModeValue("white", "gray.900")}
       >
         <Container maxW={"9xl"}>
@@ -142,6 +178,7 @@ export default function AppLayout() {
                         src={user?.photoURL}
                         size="md"
                         border="1px solid"
+                        cursor="pointer"
                       />
                     </PopoverTrigger>
                     <PopoverContent p="4">
@@ -204,8 +241,8 @@ export default function AppLayout() {
       </Box>
 
       <SlideFade in as="main">
-        <Container maxW="9xl" py="2">
-          <Outlet context={user} />
+        <Container maxW="9xl" py="4">
+          <Outlet context={appContext} />
         </Container>
       </SlideFade>
     </>

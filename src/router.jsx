@@ -1,9 +1,9 @@
 import App from "App";
 import Settings from "app/settings";
 import ProductsMng from "app/settings/products";
-import Starter from "app/starter";
-import CashierSystem from "app/starter/cashier-system";
-import Pricing from "app/starter/pricing";
+import StarterLayout from "elements/starter-layout";
+import CashierSystem from "starter/cashier-system";
+import Pricing from "starter/pricing";
 import Transaction from "app/transaksi";
 import AppLayout from "elements/app-layout";
 import { createBrowserRouter } from "react-router-dom";
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
   },
   {
     path: "starter",
-    element: <Starter />,
+    element: <StarterLayout />,
     children: [
       {
         index: true,

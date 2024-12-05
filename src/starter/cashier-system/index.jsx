@@ -24,6 +24,7 @@ export default function CashierSystem() {
     selectToUpdate,
     Confirmation,
     handleDeleteWorkbench,
+    handleEnterTheSystem,
   } = workbanchUtils;
   const cardBg = useColorModeValue("white", "gray.800");
   const user = useOutletContext();
@@ -107,7 +108,13 @@ export default function CashierSystem() {
               </Flex>
               <Text fontSize="sm">{wb.address}</Text>
               <Flex gap="2">
-                <Button w="full" size="sm" variant="outline" colorScheme="blue">
+                <Button
+                  w="full"
+                  size="sm"
+                  variant="outline"
+                  colorScheme="blue"
+                  onClick={() => handleEnterTheSystem(wb)}
+                >
                   Masuk
                 </Button>
                 <IconButton

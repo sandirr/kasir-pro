@@ -3,20 +3,16 @@ import useConfirmation from "custom-hooks/confirmation";
 import useCustomToast from "custom-hooks/toast";
 import useCloudinaryUpload from "custom-hooks/upload-file";
 import {
-  addDoc,
-  collection,
   collectionGroup,
-  deleteDoc,
   doc,
   onSnapshot,
   query,
-  serverTimestamp,
-  updateDoc,
   where,
 } from "firebase/firestore";
 import { useEffect, useState } from "react";
-import { useOutletContext } from "react-router-dom";
-import { firestore } from "utils/firebase";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import { dbDELETE, dbPOST, dbUPDATE, firestore } from "utils/firebase";
+import { setLocalWorkbench } from "utils/storage";
 
 export default function useWorkbench() {
   const user = useOutletContext();
@@ -25,6 +21,7 @@ export default function useWorkbench() {
   const { uploadFile } = useCloudinaryUpload();
   const { showToast } = useCustomToast();
   const { showConfirmation, Confirmation } = useConfirmation();
+  const navigate = useNavigate();
 
   const {
     isOpen: isOpenForm,
@@ -39,7 +36,7 @@ export default function useWorkbench() {
   const getWorkbenches = () => {
     const workbenchQuery = query(
       collectionGroup(firestore, "workbench"),
-      where("accessibleEmails", "array-contains", user.email),
+      where("accessible_emails", "array-contains", user.email),
     );
 
     onSnapshot(workbenchQuery, (workbenchSnap) => {
@@ -64,32 +61,32 @@ export default function useWorkbench() {
   };
 
   const handleAddWorkbench = async (values, { resetForm }) => {
-    const workbenchRef = collection(firestore, `users/${user.uid}/workbench`);
+    const workbenchRef = doc(
+      firestore,
+      `users/${user.uid}/workbench/${Date.now()}`,
+    );
 
     let logo = "";
     if (values.logo) {
-      logo = await uploadFile(values.logo);
+      logo = await uploadFile(values.logo, workbenchRef, "logo");
     }
     try {
-      const res = await addDoc(workbenchRef, {
+      await dbPOST(workbenchRef, {
         ...values,
         logo,
-        created_at: serverTimestamp(),
         owner: user.uid,
         owner_email: user.email,
-        accessibleEmails: [
+        accessible_emails: [
           user.email,
           ...values.employees.map((emp) => emp.email.toLowerCase()),
         ],
       });
-      if (res.id) {
-        closeForm();
-        resetForm();
-        showToast({
-          title: "Sukses",
-          description: "Toko berhasil ditambahkan",
-        });
-      }
+      closeForm();
+      resetForm();
+      showToast({
+        title: "Sukses",
+        description: "Toko berhasil ditambahkan",
+      });
     } catch (error) {
       console.error("Gagal menambahkan toko:", error);
       showToast({
@@ -109,14 +106,13 @@ export default function useWorkbench() {
 
     let logo = values.logo;
     if (values.logo instanceof File || values.logo instanceof Blob) {
-      logo = await uploadFile(values.logo);
+      logo = await uploadFile(values.logo, workbenchRef, "logo");
     }
     try {
-      await updateDoc(workbenchRef, {
+      await dbUPDATE(workbenchRef, {
         ...values,
         logo,
-        updated_at: serverTimestamp(),
-        accessibleEmails: [
+        accessible_emails: [
           user.email,
           ...values.employees.map((emp) => emp.email.toLowerCase()),
         ],
@@ -148,7 +144,7 @@ export default function useWorkbench() {
 
     if (confirmed) {
       const workbenchRef = doc(firestore, `users/${user.uid}/workbench`, wb.id);
-      await deleteDoc(workbenchRef)
+      await dbDELETE(workbenchRef)
         .then(() => {
           showToast({
             title: "Sukses",
@@ -165,6 +161,11 @@ export default function useWorkbench() {
     }
   };
 
+  const handleEnterTheSystem = (wb) => {
+    setLocalWorkbench(wb);
+    navigate("/app", { replace: true });
+  };
+
   return {
     workbenches,
     isOpenForm,
@@ -176,5 +177,6 @@ export default function useWorkbench() {
     handleEditWorkbench,
     Confirmation,
     handleDeleteWorkbench,
+    handleEnterTheSystem,
   };
 }
