@@ -33,6 +33,8 @@ import { auth, firestore } from "utils/firebase";
 import { doc, getDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { getLocalWorkbench } from "utils/storage";
+import useCloudinaryUpload from "custom-hooks/upload-file";
+import useLogout from "custom-hooks/logout";
 
 const roles = {
   1: "Super Admin",
@@ -43,6 +45,8 @@ const roles = {
 export default function AppLayout() {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { uploadPendingImages } = useCloudinaryUpload();
+  const { handleLogout } = useLogout();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [user, setUser] = useState({});
   const [role, setRole] = useState("");
@@ -78,6 +82,10 @@ export default function AppLayout() {
     getUser();
   }, []);
 
+  window.addEventListener("online", async () => {
+    await uploadPendingImages();
+  });
+
   const appContext = useMemo(
     () => ({
       user,
@@ -86,8 +94,6 @@ export default function AppLayout() {
     }),
     [user, workbench, role],
   );
-
-  console.log(role);
 
   const profile = useMemo(
     () => (
@@ -138,7 +144,7 @@ export default function AppLayout() {
         boxShadow={"md"}
         className="sticky"
         top="1"
-        zIndex={9999}
+        zIndex="sticky"
         bg={useColorModeValue("white", "gray.900")}
       >
         <Container maxW={"9xl"}>
@@ -188,6 +194,7 @@ export default function AppLayout() {
                         colorScheme="red"
                         variant="outline"
                         size="sm"
+                        onClick={handleLogout}
                       >
                         Keluar
                       </Button>
@@ -231,6 +238,7 @@ export default function AppLayout() {
                   variant="outline"
                   mt="4"
                   size="sm"
+                  onClick={handleLogout}
                 >
                   Keluar
                 </Button>

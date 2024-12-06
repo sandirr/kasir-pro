@@ -8,6 +8,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
+import { checkInternetConnection } from "./connection";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDi5dO-2tqx9ZF8zH9-fk1viZo9El3sZec",
@@ -26,13 +27,15 @@ const firestore = initializeFirestore(app, {
 });
 
 const dbPOST = async (ref, values) => {
+  const isOnline = await checkInternetConnection();
   const body = {
     ...values,
     created_at: serverTimestamp() || new Date(),
   };
-  if (navigator.onLine) {
+  if (isOnline) {
     return await setDoc(ref, body);
   } else {
+    console.warn("operasi offline");
     setDoc(ref, body).catch((err) =>
       console.warn("Error creating offline:", err),
     );
@@ -41,13 +44,15 @@ const dbPOST = async (ref, values) => {
 };
 
 const dbUPDATE = async (ref, values) => {
+  const isOnline = await checkInternetConnection();
   const body = {
     ...values,
     updated_at: serverTimestamp() || new Date(),
   };
-  if (navigator.onLine) {
+  if (isOnline) {
     return await updateDoc(ref, body);
   } else {
+    console.warn("operasi offline");
     updateDoc(ref, body).catch((err) =>
       console.warn("Error updating offline:", err),
     );
@@ -56,9 +61,11 @@ const dbUPDATE = async (ref, values) => {
 };
 
 const dbDELETE = async (ref) => {
-  if (navigator.onLine) {
+  const isOnline = await checkInternetConnection();
+  if (isOnline) {
     return await deleteDoc(ref);
   } else {
+    console.warn("operasi offline");
     deleteDoc(ref).catch((err) => console.warn("Error deleting offline:", err));
     return Promise.resolve();
   }

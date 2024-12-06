@@ -44,7 +44,7 @@ function App() {
               photoURL: user.photoURL || "",
               created_at: serverTimestamp(),
             });
-            navigate("/app");
+            navigate("/starter");
           } catch (error) {
             const errorCode = error.code;
             const errorMessage = error.message;
@@ -57,7 +57,7 @@ function App() {
               });
           }
         } else {
-          navigate("/app");
+          navigate("/starter");
         }
       })
       .catch((error) => {

@@ -1,18 +1,16 @@
 import { useState } from "react";
 import axios from "axios";
-import {
-  deleteImageFromDB,
-  getPendingImages,
-  saveImageToDB,
-  updateImageStatus,
-} from "utils/idb";
-import { dbUPDATE } from "utils/firebase";
+import { deleteImageFromDB, getPendingImages, saveImageToDB } from "utils/idb";
+import { dbUPDATE, firestore } from "utils/firebase";
+import { useInternetConnection } from "./connection";
+import { doc } from "firebase/firestore";
 
 const useCloudinaryUpload = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const { isReallyOnline } = useInternetConnection();
 
   const uploadFile = async (file, ref = "", field = "") => {
     if (!file) {
@@ -21,7 +19,7 @@ const useCloudinaryUpload = () => {
       return null;
     }
 
-    if (!navigator.onLine) {
+    if (!isReallyOnline) {
       await saveImageToDB(file, ref, field);
       setError(true);
       setErrorMessage("Offline mode: File saved locally.");
@@ -59,16 +57,16 @@ const useCloudinaryUpload = () => {
   };
 
   const uploadPendingImages = async () => {
-    if (navigator.onLine) {
+    if (isReallyOnline) {
       const pendingImages = await getPendingImages();
+      console.log(pendingImages);
       for (const image of pendingImages) {
         try {
           const imageUrl = await uploadFile(image.file);
 
           if (imageUrl) {
-            await updateImageStatus(image.id, "uploaded");
             await deleteImageFromDB(image.id);
-            await dbUPDATE(image.ref, {
+            await dbUPDATE(doc(firestore, image.ref), {
               [image.field]: imageUrl,
             });
           }

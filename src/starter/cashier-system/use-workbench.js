@@ -61,16 +61,20 @@ export default function useWorkbench() {
   };
 
   const handleAddWorkbench = async (values, { resetForm }) => {
-    const workbenchRef = doc(
-      firestore,
-      `users/${user.uid}/workbench/${Date.now()}`,
-    );
-
-    let logo = "";
-    if (values.logo) {
-      logo = await uploadFile(values.logo, workbenchRef, "logo");
-    }
     try {
+      const workbenchRef = doc(
+        firestore,
+        `users/${user.uid}/workbench/${Date.now()}`,
+      );
+
+      let logo = "";
+      if (values.logo) {
+        logo = await uploadFile(
+          values.logo,
+          `users/${user.uid}/workbench/${Date.now()}`,
+          "logo",
+        );
+      }
       await dbPOST(workbenchRef, {
         ...values,
         logo,
@@ -98,17 +102,20 @@ export default function useWorkbench() {
   };
 
   const handleEditWorkbench = async (values, { resetForm }) => {
-    const workbenchRef = doc(
-      firestore,
-      `users/${user.uid}/workbench`,
-      values.id,
-    );
-
-    let logo = values.logo;
-    if (values.logo instanceof File || values.logo instanceof Blob) {
-      logo = await uploadFile(values.logo, workbenchRef, "logo");
-    }
     try {
+      const workbenchRef = doc(
+        firestore,
+        `users/${user.uid}/workbench/${values.id}`,
+      );
+
+      let logo = values.logo;
+      if (values.logo instanceof File || values.logo instanceof Blob) {
+        logo = await uploadFile(
+          values.logo,
+          `users/${user.uid}/workbench/${values.id}`,
+          "logo",
+        );
+      }
       await dbUPDATE(workbenchRef, {
         ...values,
         logo,

@@ -18,6 +18,8 @@ import {
   useColorMode,
   Stack,
 } from "@chakra-ui/react";
+import useLogout from "custom-hooks/logout";
+import useCloudinaryUpload from "custom-hooks/upload-file";
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
@@ -46,6 +48,7 @@ const LinkItems = [
 export default function Starter() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [user, setUser] = useState({});
+  const { uploadPendingImages } = useCloudinaryUpload();
 
   const getUser = () => {
     try {
@@ -64,6 +67,10 @@ export default function Starter() {
   useEffect(() => {
     getUser();
   }, []);
+
+  window.addEventListener("online", async () => {
+    await uploadPendingImages();
+  });
 
   return (
     <Box minH="100vh" bg={useColorModeValue("white", "gray.900")}>
@@ -95,6 +102,7 @@ export default function Starter() {
 
 const SidebarContent = ({ onClose, user, ...rest }) => {
   const { colorMode, toggleColorMode } = useColorMode();
+  const { handleLogout } = useLogout();
   return (
     <Box
       bg={useColorModeValue("white", "gray.800")}
@@ -151,6 +159,7 @@ const SidebarContent = ({ onClose, user, ...rest }) => {
           variant="outline"
           width="full"
           size="sm"
+          onClick={handleLogout}
         >
           Keluar
         </Button>

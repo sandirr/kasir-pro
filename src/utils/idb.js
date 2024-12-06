@@ -1,55 +1,75 @@
-const openDB = () => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("offlineImagesDB", 1);
-    request.onupgradeneeded = (e) => {
-      const db = e.target.result;
-      if (!db.objectStoreNames.contains("images")) {
-        db.createObjectStore("images", { keyPath: "id", autoIncrement: true });
-      }
-    };
-    request.onsuccess = (e) => resolve(e.target.result);
-    request.onerror = (e) => reject("IndexedDB error: " + e.target.error);
-  });
-};
-
 export const saveImageToDB = async (file, ref = "", field = "") => {
-  const db = await openDB();
-  const tx = db.transaction("images", "readwrite");
-  const store = tx.objectStore("images");
-  const image = {
-    file,
-    ref,
-    field,
-    status: "pending",
-    timestamp: Date.now(),
-  };
-  store.add(image);
-  await tx.complete;
+  try {
+    // Read file as Data URL
+    const fileData = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+
+    // Prepare image object
+    const image = {
+      id: Date.now(), // Gunakan timestamp sebagai unique id
+      file: fileData,
+      ref,
+      field,
+      status: "pending",
+      timestamp: Date.now(),
+    };
+
+    // Ambil images yang sudah ada
+    const existingImages = JSON.parse(
+      localStorage.getItem("offlineImages") || "[]",
+    );
+
+    // Tambahkan image baru
+    existingImages.push(image);
+
+    // Simpan kembali ke localStorage
+    localStorage.setItem("offlineImages", JSON.stringify(existingImages));
+
+    return image.id;
+  } catch (error) {
+    console.error("Error in saveImageToDB", error);
+    throw error;
+  }
 };
 
 export const getPendingImages = async () => {
-  const db = await openDB();
-  const tx = db.transaction("images", "readonly");
-  const store = tx.objectStore("images");
-  const request = store.getAll();
-  await tx.complete;
-  return request.result.filter((image) => image.status === "pending");
-};
+  // Ambil semua images dari localStorage
+  const existingImages = JSON.parse(
+    localStorage.getItem("offlineImages") || "[]",
+  );
 
-export const updateImageStatus = async (id, status) => {
-  const db = await openDB();
-  const tx = db.transaction("images", "readwrite");
-  const store = tx.objectStore("images");
-  const image = await store.get(id);
-  image.status = status;
-  store.put(image);
-  await tx.complete;
+  // Filter hanya pending images
+  return existingImages.filter((image) => image.status === "pending");
 };
 
 export const deleteImageFromDB = async (id) => {
-  const db = await openDB();
-  const tx = db.transaction("images", "readwrite");
-  const store = tx.objectStore("images");
-  store.delete(id);
-  await tx.complete;
+  // Ambil images yang sudah ada
+  const existingImages = JSON.parse(
+    localStorage.getItem("offlineImages") || "[]",
+  );
+
+  // Filter out image dengan id yang diberikan
+  const updatedImages = existingImages.filter((image) => image.id !== id);
+
+  // Simpan kembali ke localStorage
+  localStorage.setItem("offlineImages", JSON.stringify(updatedImages));
+};
+
+export const updateImageStatus = async (id, status) => {
+  // Ambil images yang sudah ada
+  const existingImages = JSON.parse(
+    localStorage.getItem("offlineImages") || "[]",
+  );
+
+  // Cari dan update status image
+  const updatedImages = existingImages.map((image) =>
+    image.id === id ? { ...image, status } : image,
+  );
+
+  // Simpan kembali ke localStorage
+  localStorage.setItem("offlineImages", JSON.stringify(updatedImages));
 };
