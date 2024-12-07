@@ -59,7 +59,6 @@ const useCloudinaryUpload = () => {
   const uploadPendingImages = async () => {
     if (isReallyOnline) {
       const pendingImages = await getPendingImages();
-      console.log(pendingImages);
       for (const image of pendingImages) {
         try {
           const imageUrl = await uploadFile(image.file);

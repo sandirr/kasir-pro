@@ -62,21 +62,23 @@ export default function useWorkbench() {
 
   const handleAddWorkbench = async (values, { resetForm }) => {
     try {
+      const customId = Date.now();
       const workbenchRef = doc(
         firestore,
-        `users/${user.uid}/workbench/${Date.now()}`,
+        `users/${user.uid}/workbench/${customId}`,
       );
 
       let logo = "";
       if (values.logo) {
         logo = await uploadFile(
           values.logo,
-          `users/${user.uid}/workbench/${Date.now()}`,
+          `users/${user.uid}/workbench/${customId}`,
           "logo",
         );
       }
       await dbPOST(workbenchRef, {
         ...values,
+        id: customId,
         logo,
         owner: user.uid,
         owner_email: user.email,

@@ -2,6 +2,7 @@ import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 import { auth } from "utils/firebase";
 import useCustomToast from "./toast";
+import { clearStorage } from "utils/storage";
 
 export default function useLogout() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ export default function useLogout() {
   const handleLogout = () => {
     signOut(auth)
       .then(() => {
-        localStorage.clear();
+        clearStorage();
         navigate("/");
       })
       .catch((error) => {

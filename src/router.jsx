@@ -7,6 +7,7 @@ import Pricing from "starter/pricing";
 import Transaction from "app/transaksi";
 import AppLayout from "elements/app-layout";
 import { createBrowserRouter } from "react-router-dom";
+import Workbench from "app/settings/workbench";
 
 const router = createBrowserRouter([
   {
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
         path: "settings",
         element: <Settings />,
         children: [
+          {
+            index: true,
+            element: <Workbench />,
+          },
+          {
+            path: "workbench",
+            element: <Workbench />,
+          },
           {
             path: "products",
             element: <ProductsMng />,

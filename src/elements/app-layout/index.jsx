@@ -49,6 +49,7 @@ export default function AppLayout() {
   const { handleLogout } = useLogout();
   const isMobile = useBreakpointValue({ base: true, md: false });
   const [user, setUser] = useState({});
+  const [owner, setOwner] = useState({});
   const [role, setRole] = useState("");
 
   const workbench = getLocalWorkbench();
@@ -59,17 +60,26 @@ export default function AppLayout() {
         if (currentUser) {
           const userRef = doc(firestore, "users", currentUser?.uid);
           const res = await getDoc(userRef);
-          if (res.exists()) setUser(res.data());
-        }
-        if (currentUser.uid && workbench) {
-          if (currentUser.uid === workbench.owner) {
-            setRole(roles["1"]);
-          } else {
-            const me =
-              workbench.employees?.find(
-                (em) => em.email === currentUser.email,
-              ) || {};
-            setRole(roles[me.role || "3"]);
+          if (res.exists()) {
+            setUser(res.data());
+          }
+
+          if (workbench) {
+            if (currentUser.uid === workbench.owner) {
+              setRole(roles["1"]);
+              setOwner(res.data());
+            } else {
+              const me =
+                workbench.employees?.find(
+                  (em) => em.email === currentUser.email,
+                ) || {};
+              setRole(roles[me.role || "3"]);
+              const ownerRef = doc(firestore, "users", workbench.owner);
+              const owner = await getDoc(ownerRef);
+              if (owner.exists()) {
+                setOwner(owner.data());
+              }
+            }
           }
         }
       });
@@ -91,8 +101,9 @@ export default function AppLayout() {
       user,
       workbench,
       role,
+      owner,
     }),
-    [user, workbench, role],
+    [user, workbench, role, owner],
   );
 
   const profile = useMemo(
@@ -143,7 +154,7 @@ export default function AppLayout() {
         as="nav"
         boxShadow={"md"}
         className="sticky"
-        top="1"
+        top="0"
         zIndex="sticky"
         bg={useColorModeValue("white", "gray.900")}
       >

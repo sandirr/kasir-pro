@@ -1,7 +1,8 @@
 import { Box, Tab, TabIndicator, TabList, Tabs } from "@chakra-ui/react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useOutletContext } from "react-router-dom";
 
 export default function Settings() {
+  const context = useOutletContext();
   return (
     <Box>
       <Tabs
@@ -11,11 +12,12 @@ export default function Settings() {
         whiteSpace="nowrap"
       >
         <TabList>
-          <Tab fontSize="sm">Sistem Kasir</Tab>
+          <Tab fontSize="sm" as={Link} to="workbench">
+            Sistem Kasir
+          </Tab>
           <Tab fontSize="sm" as={Link} to="products">
             Produk
           </Tab>
-          <Tab fontSize="sm">Pegawai</Tab>
           <Tab fontSize="sm">Nilai Default</Tab>
           <Tab fontSize="sm">Diskon</Tab>
         </TabList>
@@ -26,7 +28,7 @@ export default function Settings() {
           borderRadius="1px"
         />
       </Tabs>
-      <Outlet />
+      <Outlet context={context} />
     </Box>
   );
 }

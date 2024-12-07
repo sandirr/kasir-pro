@@ -46,7 +46,7 @@ export default function ProductsMng() {
       <Flex
         justifyContent="space-between"
         alignItems="center"
-        mt="2"
+        py="2"
         gap="2"
         flexWrap="wrap"
       >
