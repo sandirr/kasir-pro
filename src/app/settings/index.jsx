@@ -15,6 +15,9 @@ export default function Settings() {
           <Tab fontSize="sm" as={Link} to="workbench">
             Sistem Kasir
           </Tab>
+          <Tab fontSize="sm" as={Link} to="category">
+            Kategori
+          </Tab>
           <Tab fontSize="sm" as={Link} to="products">
             Produk
           </Tab>

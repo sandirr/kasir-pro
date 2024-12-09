@@ -8,6 +8,7 @@ import Transaction from "app/transaksi";
 import AppLayout from "elements/app-layout";
 import { createBrowserRouter } from "react-router-dom";
 import Workbench from "app/settings/workbench";
+import CategoriesMng from "app/settings/categories";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
           {
             path: "products",
             element: <ProductsMng />,
+          },
+          {
+            path: "category",
+            element: <CategoriesMng />,
           },
         ],
       },

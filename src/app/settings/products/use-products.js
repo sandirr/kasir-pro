@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import {
   query,
   limit,
@@ -22,6 +22,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import useCloudinaryUpload from "custom-hooks/upload-file";
 import useCustomToast from "custom-hooks/toast";
 import useConfirmation from "custom-hooks/confirmation";
+import { useOutletContext } from "react-router-dom";
 
 const useProducts = (initialPerPage = 10) => {
   const { showToast } = useCustomToast();
@@ -35,6 +36,8 @@ const useProducts = (initialPerPage = 10) => {
   const [pageSnapshots, setPageSnapshots] = useState([]);
   const [perPage, setPerpage] = useState(() => initialPerPage);
 
+  const { workbench: wb } = useOutletContext();
+
   const {
     isOpen: addNew,
     onToggle: toggleForm,
@@ -44,10 +47,7 @@ const useProducts = (initialPerPage = 10) => {
       setProduct(null);
     },
   });
-  const ref = useMemo(
-    () => "users/testing/workbench/iou0P0iz4roB7IkpYVgN/products",
-    [],
-  );
+  const ref = `users/${wb.owner}/workbench/${wb.id}/products`;
 
   // user/{owner identifier}/workbench/{workbench id}/products
 

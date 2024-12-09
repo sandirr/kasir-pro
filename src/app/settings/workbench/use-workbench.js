@@ -5,7 +5,7 @@ import { doc } from "firebase/firestore";
 import { useState } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import { dbUPDATE, firestore } from "utils/firebase";
-import { clearWorkbench } from "utils/storage";
+import { clearWorkbench, setLocalWorkbench } from "utils/storage";
 
 export default function useWorkbench() {
   const { user, workbench: wb, owner } = useOutletContext();
@@ -44,20 +44,22 @@ export default function useWorkbench() {
           "logo",
         );
       }
-      await dbUPDATE(workbenchRef, {
+      const body = {
         ...values,
         logo,
         accessible_emails: [
           user.email,
           ...values.employees.map((emp) => emp.email.toLowerCase()),
         ],
-      });
+      };
+      await dbUPDATE(workbenchRef, body);
       closeForm();
       resetForm();
       showToast({
         title: "Sukses",
         description: "Toko berhasil diedit",
       });
+      setLocalWorkbench(body);
     } catch (error) {
       console.error("Gagal mengedit toko:", error);
       showToast({
