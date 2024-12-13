@@ -106,7 +106,11 @@ export default function ProductsMng() {
             </Tr>
           </Thead>
           <Tbody>
-            {products.map((product, index) => (
+            {!products?.length ? 
+            <Tr>
+              <Td colSpan={9} textAlign='center'>Belum Ada Data Produk</Td>
+            </Tr>
+            : products.map((product, index) => (
               <Tr key={index}>
                 <Td>{index + 1 + (currentPage - 1) * perPage}</Td>
                 <Td>{product.name}</Td>

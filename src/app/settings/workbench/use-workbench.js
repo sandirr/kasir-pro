@@ -12,7 +12,6 @@ export default function useWorkbench() {
   const [workbench, setWorkbench] = useState(() => wb);
   const { uploadFile } = useCloudinaryUpload();
   const { showToast } = useCustomToast();
-
   const navigate = useNavigate();
   const goToStarter = () => {
     clearWorkbench();
@@ -48,7 +47,7 @@ export default function useWorkbench() {
         ...values,
         logo,
         accessible_emails: [
-          user.email,
+          owner.email,
           ...values.employees.map((emp) => emp.email.toLowerCase()),
         ],
       };

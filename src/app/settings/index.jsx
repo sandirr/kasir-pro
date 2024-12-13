@@ -6,19 +6,19 @@ export default function Settings() {
   return (
     <Box>
       <Tabs
-        variant="unstyled"
+        // variant="unstyled"
         overflowX="auto"
         className="hide-scroll-bar"
         whiteSpace="nowrap"
       >
         <TabList>
-          <Tab fontSize="sm" as={Link} to="workbench">
+          <Tab fontSize="sm" as={Link} to="workbench" fontWeight='bold'>
             Sistem Kasir
           </Tab>
-          <Tab fontSize="sm" as={Link} to="category">
+          <Tab fontSize="sm" as={Link} to="category" fontWeight='bold'>
             Kategori
           </Tab>
-          <Tab fontSize="sm" as={Link} to="products">
+          <Tab fontSize="sm" as={Link} to="products" fontWeight='bold'>
             Produk
           </Tab>
           <Tab fontSize="sm">Nilai Default</Tab>

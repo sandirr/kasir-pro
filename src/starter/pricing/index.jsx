@@ -21,21 +21,33 @@ import { FaCheckCircle, FaRegTimesCircle } from "react-icons/fa";
 const options = [
   {
     id: 1,
-    desc: "1 sistem kasir/toko",
+    desc: "mode offline (luring)",
     icon: FaCheckCircle,
     color: "green.500",
   },
-  { id: 2, desc: "1 pegawai kasir", icon: FaCheckCircle, color: "green.500" },
-  { id: 3, desc: "2 kategori produk", icon: FaCheckCircle, color: "green.500" },
+  {
+    id: 12,
+    desc: "mode online (daring)",
+    icon: FaRegTimesCircle,
+    color: "red",
+  },
+  {
+    id: 13,
+    desc: "transaksi & print struk",
+    icon: FaCheckCircle,
+    color: "green.500",
+  },
+  { id: 3, desc: "manajemen kategori", icon: FaCheckCircle, color: "green.500" },
+  { id: 2, desc: "manajemen produk", icon: FaCheckCircle, color: "green.500" },
   {
     id: 4,
-    desc: "5 produk per kategori",
+    desc: "manajemen pegawai",
     icon: FaCheckCircle,
     color: "green.500",
   },
   {
     id: 5,
-    desc: "50 transaksi per hari",
+    desc: "pengaturan diskon",
     icon: FaCheckCircle,
     color: "green.500",
   },
@@ -45,8 +57,9 @@ const options = [
     icon: FaRegTimesCircle,
     color: "red",
   },
-  { id: 7, desc: "share katalog produk", icon: FaRegTimesCircle, color: "red" },
+  { id: 7, desc: "share katalog produk / semi e-commerce", icon: FaRegTimesCircle, color: "red" },
   { id: 8, desc: "gunakan logo sendiri", icon: FaRegTimesCircle, color: "red" },
+  { id: 9, desc: "upload foto produk", icon: FaRegTimesCircle, color: "red" },
 ];
 
 const options2 = [
@@ -244,7 +257,7 @@ export default function Pricing() {
         <PriceWrapper>
           <Box py={4} px={12}>
             <Text fontWeight="500" fontSize="2xl" textAlign="center">
-              Pro <Badge colorScheme="red">12 Bulan</Badge>
+              Subur <Badge colorScheme="red">12 Bulan</Badge>
             </Text>
             <HStack justifyContent="center">
               <Text fontSize="3xl" fontWeight="600">
@@ -308,7 +321,7 @@ const PackageTier = ({
           </ListItem>
         ))}
       </List>
-      <Heading fontSize="lg">{typePlan}</Heading>
+      {/* <Heading fontSize="lg">{typePlan}</Heading> */}
       <Stack>
         <Button size="md" colorScheme="green" onClick={scrollToBottom}>
           Pilih Paket

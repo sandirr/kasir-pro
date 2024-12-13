@@ -122,7 +122,7 @@ export default function useWorkbench() {
         ...values,
         logo,
         accessible_emails: [
-          user.email,
+          values.owner_email,
           ...values.employees.map((emp) => emp.email.toLowerCase()),
         ],
       });
