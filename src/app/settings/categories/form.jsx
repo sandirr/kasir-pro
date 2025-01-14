@@ -50,7 +50,7 @@ export default function CategoryForm(props) {
                 <Stack spacing={3}>
                   <Box flex={1}>
                     <Text as="label" fontSize="sm">
-                      Nama
+                      Nama*
                     </Text>
                     <Input
                       size="sm"

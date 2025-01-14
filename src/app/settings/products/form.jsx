@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Flex,
@@ -48,6 +50,7 @@ export default function ProductForm(props) {
     handleAddNewProduct,
     handleUpdateProduct,
     product,
+    categories,
   } = props;
   const initialValues = {
     name: "",
@@ -83,10 +86,14 @@ export default function ProductForm(props) {
               <ModalCloseButton />
               <ModalBody>
                 <Stack spacing={3}>
+                  <Alert status="info" fontSize="sm">
+                    <AlertIcon />
+                    <Text>Buka tab kategori untuk manajemen kategori</Text>
+                  </Alert>
                   <Flex flexWrap="wrap" gap="4">
                     <Box flex={1}>
                       <Text as="label" fontSize="sm">
-                        Nama
+                        Nama*
                       </Text>
                       <Input
                         size="sm"
@@ -111,8 +118,11 @@ export default function ProductForm(props) {
                         value={values.category}
                         onChange={handleChange}
                       >
-                        <option value="A">A</option>
-                        <option value="B">B</option>
+                        {categories.map((category) => (
+                          <option value={category.id} key={category.id}>
+                            {category.name}
+                          </option>
+                        ))}
                       </Select>
                       {errors.category && touched.category && (
                         <Text fontSize="xs" color="red.500">
@@ -124,7 +134,7 @@ export default function ProductForm(props) {
                   <Flex flexWrap="wrap" gap="4">
                     <Box flex={1}>
                       <Text as="label" fontSize="sm">
-                        Harga
+                        Harga*
                       </Text>
                       <Input
                         size="sm"
@@ -166,7 +176,7 @@ export default function ProductForm(props) {
                   <Flex flexWrap="wrap" gap="4">
                     <Box flex={1}>
                       <Text as="label" fontSize="sm">
-                        Stok
+                        Stok*
                       </Text>
                       <Input
                         size="sm"

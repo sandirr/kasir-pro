@@ -20,9 +20,11 @@ import {
 } from "@chakra-ui/react";
 import useProducts from "./use-products";
 import ProductForm from "./form";
+import useCategories from "../categories/use-categories";
 
 export default function ProductsMng() {
   const productUtils = useProducts(10);
+  const { categories } = useCategories(100);
   const {
     products,
     currentPage,
@@ -132,7 +134,10 @@ export default function ProductsMng() {
                   <Td>
                     {product.stock} ({product.unit})
                   </Td>
-                  <Td>{product.category}</Td>
+                  <Td>
+                    {categories.length &&
+                      categories.find((c) => c.id === product.category)?.name}
+                  </Td>
                   <Td isNumeric>
                     <ButtonGroup size="sm">
                       <Tooltip label="Edit">
@@ -180,7 +185,7 @@ export default function ProductsMng() {
         </Button>
       </Flex>
 
-      <ProductForm {...productUtils} />
+      <ProductForm {...productUtils} categories={categories} />
     </>
   );
 }
