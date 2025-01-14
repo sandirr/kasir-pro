@@ -106,52 +106,56 @@ export default function ProductsMng() {
             </Tr>
           </Thead>
           <Tbody>
-            {!products?.length ? 
-            <Tr>
-              <Td colSpan={9} textAlign='center'>Belum Ada Data Produk</Td>
-            </Tr>
-            : products.map((product, index) => (
-              <Tr key={index}>
-                <Td>{index + 1 + (currentPage - 1) * perPage}</Td>
-                <Td>{product.name}</Td>
-                <Td>
-                  <Image
-                    src={product.image || "https://placehold.co/40x40"}
-                    width={10}
-                  />
-                </Td>
-                <Td>{product.price}</Td>
-                <Td>
-                  {product.discount} (
-                  {Math.round((product.discount / product.price) * 100)}%)
-                </Td>
-                <Td>{product.price_after_discount}</Td>
-                <Td>
-                  {product.stock} ({product.unit})
-                </Td>
-                <Td>{product.category}</Td>
-                <Td isNumeric>
-                  <ButtonGroup size="sm">
-                    <Tooltip label="Edit">
-                      <IconButton
-                        colorScheme="teal"
-                        onClick={() => selectToUpdate(product)}
-                      >
-                        <Icon as={EditIcon} />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip label="Hapus">
-                      <IconButton
-                        colorScheme="red"
-                        onClick={() => handleDeleteProduct(product)}
-                      >
-                        <Icon as={DeleteIcon} />
-                      </IconButton>
-                    </Tooltip>
-                  </ButtonGroup>
+            {!products?.length ? (
+              <Tr>
+                <Td colSpan={9} textAlign="center">
+                  Belum Ada Data Produk
                 </Td>
               </Tr>
-            ))}
+            ) : (
+              products.map((product, index) => (
+                <Tr key={index}>
+                  <Td>{index + 1 + (currentPage - 1) * perPage}</Td>
+                  <Td>{product.name}</Td>
+                  <Td>
+                    <Image
+                      src={product.image || "https://placehold.co/40x40"}
+                      width={10}
+                    />
+                  </Td>
+                  <Td>{product.price}</Td>
+                  <Td>
+                    {product.discount} (
+                    {Math.round((product.discount / product.price) * 100)}%)
+                  </Td>
+                  <Td>{product.price_after_discount}</Td>
+                  <Td>
+                    {product.stock} ({product.unit})
+                  </Td>
+                  <Td>{product.category}</Td>
+                  <Td isNumeric>
+                    <ButtonGroup size="sm">
+                      <Tooltip label="Edit">
+                        <IconButton
+                          colorScheme="teal"
+                          onClick={() => selectToUpdate(product)}
+                        >
+                          <Icon as={EditIcon} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip label="Hapus">
+                        <IconButton
+                          colorScheme="red"
+                          onClick={() => handleDeleteProduct(product)}
+                        >
+                          <Icon as={DeleteIcon} />
+                        </IconButton>
+                      </Tooltip>
+                    </ButtonGroup>
+                  </Td>
+                </Tr>
+              ))
+            )}
           </Tbody>
         </Table>
       </TableContainer>

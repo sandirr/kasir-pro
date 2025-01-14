@@ -3,6 +3,8 @@ import {
   AlertIcon,
   Box,
   Button,
+  Flex,
+  IconButton,
   Input,
   Modal,
   ModalBody,
@@ -19,6 +21,7 @@ import {
 import { Formik, Field, Form, ErrorMessage, FieldArray } from "formik";
 import * as Yup from "yup";
 import DnDImage from "elements/dnd-image";
+import { DeleteIcon } from "@chakra-ui/icons";
 
 const descriptions = {
   "F&B":
@@ -165,49 +168,52 @@ export default function CashierSystemForm(props) {
                     </Text>
                     <FieldArray name="employees">
                       {({ push, remove }) => (
-                        <Box>
+                        <Stack spacing={4}>
                           {values.employees.map((cashier, index) => (
-                            <Stack key={index} spacing={2} mb={4}>
-                              <Box>
-                                <Field
-                                  as={Input}
-                                  name={`employees[${index}].email`}
-                                  size="sm"
-                                  placeholder="Email Kasir"
-                                />
-                                <ErrorMessage
-                                  name={`employees[${index}].email`}
-                                  component={Text}
-                                  fontSize="xs"
-                                  color="red.500"
-                                />
-                              </Box>
-                              <Box>
-                                <Field
-                                  as={Select}
-                                  name={`employees[${index}].role`}
-                                  size="sm"
-                                >
-                                  <option value="">Pilih Role</option>
-                                  <option value="1">Super Admin</option>
-                                  <option value="2">Admin</option>
-                                  <option value="3">Kasir</option>
-                                </Field>
-                                <ErrorMessage
-                                  name={`employees[${index}].role`}
-                                  component={Text}
-                                  fontSize="xs"
-                                  color="red.500"
-                                />
-                              </Box>
-                              <Button
-                                size="xs"
+                            <Flex key={index} alignItems="center" gap="2">
+                              <Stack spacing={2} flex={1}>
+                                <Box>
+                                  <Field
+                                    as={Input}
+                                    name={`employees[${index}].email`}
+                                    size="sm"
+                                    placeholder="Email Kasir"
+                                  />
+                                  <ErrorMessage
+                                    name={`employees[${index}].email`}
+                                    component={Text}
+                                    fontSize="xs"
+                                    color="red.500"
+                                  />
+                                </Box>
+                                <Box>
+                                  <Field
+                                    as={Select}
+                                    name={`employees[${index}].role`}
+                                    size="sm"
+                                  >
+                                    <option value="">Pilih Role</option>
+                                    <option value="1">Super Admin</option>
+                                    <option value="2">Admin</option>
+                                    <option value="3">Kasir</option>
+                                  </Field>
+                                  <ErrorMessage
+                                    name={`employees[${index}].role`}
+                                    component={Text}
+                                    fontSize="xs"
+                                    color="red.500"
+                                  />
+                                </Box>
+                              </Stack>
+                              <IconButton
+                                size="sm"
                                 colorScheme="red"
+                                variant="outline"
                                 onClick={() => remove(index)}
                               >
-                                Hapus Pegawai
-                              </Button>
-                            </Stack>
+                                <DeleteIcon />
+                              </IconButton>
+                            </Flex>
                           ))}
                           <Button
                             mt={2}
@@ -216,7 +222,7 @@ export default function CashierSystemForm(props) {
                           >
                             Tambah Pegawai
                           </Button>
-                        </Box>
+                        </Stack>
                       )}
                     </FieldArray>
                   </Box>
